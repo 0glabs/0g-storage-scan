@@ -373,7 +373,7 @@ func getDATxHandler(c *gin.Context) {
 //
 //	@Summary		DA data storage statistics
 //	@Description	Query DA data storage statistics, including incremental and full data, and support querying at hourly or daily time intervals
-//	@Tags			statistic
+//	@Tags			DA statistic
 //	@Accept			json
 //	@Produce		json
 //	@Param			skip			query		int		false	"The number of skipped records, usually it's pageSize * (pageNumber - 1)"	minimum(0)	default(0)
@@ -393,7 +393,7 @@ func listDADataStatsHandler(c *gin.Context) {
 //
 //	@Summary		DA client statistics
 //	@Description	Query DA client statistics, including incremental, active and full data, and support querying at hourly or daily time intervals
-//	@Tags			statistic
+//	@Tags			DA statistic
 //	@Accept			json
 //	@Produce		json
 //	@Param			skip			query		int		false	"The number of skipped records, usually it's pageSize * (pageNumber - 1)"	minimum(0)	default(0)
@@ -413,7 +413,7 @@ func listDAClientStatsHandler(c *gin.Context) {
 //
 //	@Summary		DA signer statistics
 //	@Description	Query DA signer statistics, including incremental, active and full data, and support querying at hourly or daily time intervals
-//	@Tags			statistic
+//	@Tags			DA statistic
 //	@Accept			json
 //	@Produce		json
 //	@Param			skip			query		int		false	"The number of skipped records, usually it's pageSize * (pageNumber - 1)"	minimum(0)	default(0)
