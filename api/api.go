@@ -94,6 +94,11 @@ func RegisterRouter(router *gin.Engine) {
 	daTxsRoute.GET("", listDATxsHandler)
 	daTxsRoute.GET(":blockNumber/:epoch/:quorumID/:dataRoot", getDATxHandler)
 
+	daStatsRoute := apiRoute.Group("/da/stats")
+	daStatsRoute.GET("storage", listDADataStatsHandler)
+	daStatsRoute.GET("client", listDAClientStatsHandler)
+	daStatsRoute.GET("signer", listDASignerStatsHandler)
+
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
 
@@ -362,4 +367,64 @@ func listDATxsHandler(c *gin.Context) {
 //	@Router			/da/txs/{blockNumber}/{epoch}/{quorumID}/{dataRoot} [get]
 func getDATxHandler(c *gin.Context) {
 	api.Wrap(getDATx)(c)
+}
+
+// listDADataStatsHandler godoc
+//
+//	@Summary		DA data storage statistics
+//	@Description	Query DA data storage statistics, including incremental and full data, and support querying at hourly or daily time intervals
+//	@Tags			statistic
+//	@Accept			json
+//	@Produce		json
+//	@Param			skip			query		int		false	"The number of skipped records, usually it's pageSize * (pageNumber - 1)"	minimum(0)	default(0)
+//	@Param			limit			query		int		false	"The number of records displayed on the page"								minimum(1)	maximum(2000)	default(10)
+//	@Param			minTimestamp	query		int		false	"Timestamp in seconds"
+//	@Param			maxTimestamp	query		int		false	"Timestamp in seconds"
+//	@Param			intervalType	query		string	false	"Statistics interval"	Enums(hour, day)	default(day)
+//	@Param			sort			query		string	false	"Sort by timestamp"		Enums(asc, desc)	default(desc)
+//	@Success		200				{object}	api.BusinessError{Data=DADataStatList}
+//	@Failure		600				{object}	api.BusinessError
+//	@Router			/da/stats/storage [get]
+func listDADataStatsHandler(c *gin.Context) {
+	api.Wrap(listDADataStat)(c)
+}
+
+// listDAClientStatsHandler godoc
+//
+//	@Summary		DA client statistics
+//	@Description	Query DA client statistics, including incremental, active and full data, and support querying at hourly or daily time intervals
+//	@Tags			statistic
+//	@Accept			json
+//	@Produce		json
+//	@Param			skip			query		int		false	"The number of skipped records, usually it's pageSize * (pageNumber - 1)"	minimum(0)	default(0)
+//	@Param			limit			query		int		false	"The number of records displayed on the page"								minimum(1)	maximum(2000)	default(10)
+//	@Param			minTimestamp	query		int		false	"Timestamp in seconds"
+//	@Param			maxTimestamp	query		int		false	"Timestamp in seconds"
+//	@Param			intervalType	query		string	false	"Statistics interval"	Enums(hour, day)	default(day)
+//	@Param			sort			query		string	false	"Sort by timestamp"		Enums(asc, desc)	default(desc)
+//	@Success		200				{object}	api.BusinessError{Data=DAClientStatList}
+//	@Failure		600				{object}	api.BusinessError
+//	@Router			/da/stats/client [get]
+func listDAClientStatsHandler(c *gin.Context) {
+	api.Wrap(listDAClientStat)(c)
+}
+
+// listDAClientStatsHandler godoc
+//
+//	@Summary		DA signer statistics
+//	@Description	Query DA signer statistics, including incremental, active and full data, and support querying at hourly or daily time intervals
+//	@Tags			statistic
+//	@Accept			json
+//	@Produce		json
+//	@Param			skip			query		int		false	"The number of skipped records, usually it's pageSize * (pageNumber - 1)"	minimum(0)	default(0)
+//	@Param			limit			query		int		false	"The number of records displayed on the page"								minimum(1)	maximum(2000)	default(10)
+//	@Param			minTimestamp	query		int		false	"Timestamp in seconds"
+//	@Param			maxTimestamp	query		int		false	"Timestamp in seconds"
+//	@Param			intervalType	query		string	false	"Statistics interval"	Enums(hour, day)	default(day)
+//	@Param			sort			query		string	false	"Sort by timestamp"		Enums(asc, desc)	default(desc)
+//	@Success		200				{object}	api.BusinessError{Data=DASignerStatList}
+//	@Failure		600				{object}	api.BusinessError
+//	@Router			/da/stats/signer [get]
+func listDASignerStatsHandler(c *gin.Context) {
+	api.Wrap(listDASignerStat)(c)
 }
