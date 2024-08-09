@@ -36,6 +36,6 @@ services:
     restart: unless-stopped
     environment:
       - 0G_SCAN_LOG_LEVEL=info
-      - 0G_SCAN_API_ENDPOINT=:${API_LISTEN_PORT:-16751}
+      - 0G_SCAN_API_ENDPOINT=:${API_LISTEN_PORT:-17651}
     network_mode: host
 #    container_name: 0g-scan-da-api

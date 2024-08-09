@@ -352,7 +352,7 @@ func getAddressInfo(c *gin.Context) (*AddressInfo, error) {
 //	@Param			txHash		query		string	false	"The layer1 tx hash of the submission"
 //	@Success		200			{object}	api.BusinessError{Data=DATxList}
 //	@Failure		600			{object}	api.BusinessError
-//	@Router			/da/txs [get]
+//	@Router			/txs [get]
 func listDATxsHandler(c *gin.Context) {
 	api.Wrap(listDATxs)(c)
 }
@@ -370,7 +370,7 @@ func listDATxsHandler(c *gin.Context) {
 //	@Param			dataRoot	path		string	true	"Data root"
 //	@Success		200			{object}	api.BusinessError{Data=DATxInfo}
 //	@Failure		600			{object}	api.BusinessError
-//	@Router			/da/txs/{blockNumber}/{epoch}/{quorumID}/{dataRoot} [get]
+//	@Router			/txs/{blockNumber}/{epoch}/{quorumID}/{dataRoot} [get]
 func getDATxHandler(c *gin.Context) {
 	api.Wrap(getDATx)(c)
 }
@@ -390,7 +390,7 @@ func getDATxHandler(c *gin.Context) {
 //	@Param			sort			query		string	false	"Sort by timestamp"		Enums(asc, desc)	default(desc)
 //	@Success		200				{object}	api.BusinessError{Data=DADataStatList}
 //	@Failure		600				{object}	api.BusinessError
-//	@Router			/da/stats/storage [get]
+//	@Router			/stats/storage [get]
 func listDADataStatsHandler(c *gin.Context) {
 	api.Wrap(listDADataStat)(c)
 }
@@ -410,7 +410,7 @@ func listDADataStatsHandler(c *gin.Context) {
 //	@Param			sort			query		string	false	"Sort by timestamp"		Enums(asc, desc)	default(desc)
 //	@Success		200				{object}	api.BusinessError{Data=DAClientStatList}
 //	@Failure		600				{object}	api.BusinessError
-//	@Router			/da/stats/client [get]
+//	@Router			/stats/client [get]
 func listDAClientStatsHandler(c *gin.Context) {
 	api.Wrap(listDAClientStat)(c)
 }
@@ -430,7 +430,7 @@ func listDAClientStatsHandler(c *gin.Context) {
 //	@Param			sort			query		string	false	"Sort by timestamp"		Enums(asc, desc)	default(desc)
 //	@Success		200				{object}	api.BusinessError{Data=DASignerStatList}
 //	@Failure		600				{object}	api.BusinessError
-//	@Router			/da/stats/signer [get]
+//	@Router			/stats/signer [get]
 func listDASignerStatsHandler(c *gin.Context) {
 	api.Wrap(listDASignerStat)(c)
 }

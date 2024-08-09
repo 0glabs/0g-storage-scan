@@ -208,431 +208,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/da/stats/client": {
-            "get": {
-                "description": "Query DA client statistics, including incremental, active and full data, and support querying at hourly or daily time intervals",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "DA statistic"
-                ],
-                "summary": "DA client statistics",
-                "parameters": [
-                    {
-                        "minimum": 0,
-                        "type": "integer",
-                        "default": 0,
-                        "description": "The number of skipped records, usually it's pageSize * (pageNumber - 1)",
-                        "name": "skip",
-                        "in": "query"
-                    },
-                    {
-                        "maximum": 2000,
-                        "minimum": 1,
-                        "type": "integer",
-                        "default": 10,
-                        "description": "The number of records displayed on the page",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Timestamp in seconds",
-                        "name": "minTimestamp",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Timestamp in seconds",
-                        "name": "maxTimestamp",
-                        "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "hour",
-                            "day"
-                        ],
-                        "type": "string",
-                        "default": "day",
-                        "description": "Statistics interval",
-                        "name": "intervalType",
-                        "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "asc",
-                            "desc"
-                        ],
-                        "type": "string",
-                        "default": "desc",
-                        "description": "Sort by timestamp",
-                        "name": "sort",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/api.BusinessError"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "Data": {
-                                            "$ref": "#/definitions/api.DAClientStatList"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "600": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/api.BusinessError"
-                        }
-                    }
-                }
-            }
-        },
-        "/da/stats/signer": {
-            "get": {
-                "description": "Query DA signer statistics, including incremental, active and full data, and support querying at hourly or daily time intervals",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "DA statistic"
-                ],
-                "summary": "DA signer statistics",
-                "parameters": [
-                    {
-                        "minimum": 0,
-                        "type": "integer",
-                        "default": 0,
-                        "description": "The number of skipped records, usually it's pageSize * (pageNumber - 1)",
-                        "name": "skip",
-                        "in": "query"
-                    },
-                    {
-                        "maximum": 2000,
-                        "minimum": 1,
-                        "type": "integer",
-                        "default": 10,
-                        "description": "The number of records displayed on the page",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Timestamp in seconds",
-                        "name": "minTimestamp",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Timestamp in seconds",
-                        "name": "maxTimestamp",
-                        "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "hour",
-                            "day"
-                        ],
-                        "type": "string",
-                        "default": "day",
-                        "description": "Statistics interval",
-                        "name": "intervalType",
-                        "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "asc",
-                            "desc"
-                        ],
-                        "type": "string",
-                        "default": "desc",
-                        "description": "Sort by timestamp",
-                        "name": "sort",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/api.BusinessError"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "Data": {
-                                            "$ref": "#/definitions/api.DASignerStatList"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "600": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/api.BusinessError"
-                        }
-                    }
-                }
-            }
-        },
-        "/da/stats/storage": {
-            "get": {
-                "description": "Query DA data storage statistics, including incremental and full data, and support querying at hourly or daily time intervals",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "DA statistic"
-                ],
-                "summary": "DA data storage statistics",
-                "parameters": [
-                    {
-                        "minimum": 0,
-                        "type": "integer",
-                        "default": 0,
-                        "description": "The number of skipped records, usually it's pageSize * (pageNumber - 1)",
-                        "name": "skip",
-                        "in": "query"
-                    },
-                    {
-                        "maximum": 2000,
-                        "minimum": 1,
-                        "type": "integer",
-                        "default": 10,
-                        "description": "The number of records displayed on the page",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Timestamp in seconds",
-                        "name": "minTimestamp",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Timestamp in seconds",
-                        "name": "maxTimestamp",
-                        "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "hour",
-                            "day"
-                        ],
-                        "type": "string",
-                        "default": "day",
-                        "description": "Statistics interval",
-                        "name": "intervalType",
-                        "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "asc",
-                            "desc"
-                        ],
-                        "type": "string",
-                        "default": "desc",
-                        "description": "Sort by timestamp",
-                        "name": "sort",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/api.BusinessError"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "Data": {
-                                            "$ref": "#/definitions/api.DADataStatList"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "600": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/api.BusinessError"
-                        }
-                    }
-                }
-            }
-        },
-        "/da/txs": {
-            "get": {
-                "description": "Query DA transactions",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "DA transaction"
-                ],
-                "summary": "DA transaction list",
-                "parameters": [
-                    {
-                        "minimum": 0,
-                        "type": "integer",
-                        "default": 0,
-                        "description": "The number of skipped records, usually it's pageSize * (pageNumber - 1)",
-                        "name": "skip",
-                        "in": "query"
-                    },
-                    {
-                        "maximum": 100,
-                        "minimum": 1,
-                        "type": "integer",
-                        "default": 10,
-                        "description": "The number of records displayed on the page",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "The merkle root hash of the uploaded file",
-                        "name": "rootHash",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "The layer1 tx hash of the submission",
-                        "name": "txHash",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/api.BusinessError"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "Data": {
-                                            "$ref": "#/definitions/api.DATxList"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "600": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/api.BusinessError"
-                        }
-                    }
-                }
-            }
-        },
-        "/da/txs/{blockNumber}/{epoch}/{quorumID}/{dataRoot}": {
-            "get": {
-                "description": "Query DA transaction by blockNumber, epoch, quorumId, dataRoot",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "DA transaction"
-                ],
-                "summary": "DA transaction information",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Block number at which the file is uploaded",
-                        "name": "blockNumber",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "The consecutive blocks in 0g chain is divided into groups of EpochBlocks and each group is an epoch",
-                        "name": "epoch",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Quorum id in an epoch",
-                        "name": "quorumID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Data root",
-                        "name": "dataRoot",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/api.BusinessError"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "Data": {
-                                            "$ref": "#/definitions/api.DATxInfo"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "600": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/api.BusinessError"
-                        }
-                    }
-                }
-            }
-        },
         "/rewards": {
             "get": {
                 "description": "Query storage rewards",
@@ -772,6 +347,100 @@ const docTemplate = `{
                                     "properties": {
                                         "Data": {
                                             "$ref": "#/definitions/api.AddressStatList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "600": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/api.BusinessError"
+                        }
+                    }
+                }
+            }
+        },
+        "/stats/client": {
+            "get": {
+                "description": "Query DA client statistics, including incremental, active and full data, and support querying at hourly or daily time intervals",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DA statistic"
+                ],
+                "summary": "DA client statistics",
+                "parameters": [
+                    {
+                        "minimum": 0,
+                        "type": "integer",
+                        "default": 0,
+                        "description": "The number of skipped records, usually it's pageSize * (pageNumber - 1)",
+                        "name": "skip",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 2000,
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 10,
+                        "description": "The number of records displayed on the page",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Timestamp in seconds",
+                        "name": "minTimestamp",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Timestamp in seconds",
+                        "name": "maxTimestamp",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "hour",
+                            "day"
+                        ],
+                        "type": "string",
+                        "default": "day",
+                        "description": "Statistics interval",
+                        "name": "intervalType",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "default": "desc",
+                        "description": "Sort by timestamp",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/api.BusinessError"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "Data": {
+                                            "$ref": "#/definitions/api.DAClientStatList"
                                         }
                                     }
                                 }
@@ -1069,9 +738,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/stats/storage": {
+        "/stats/signer": {
             "get": {
-                "description": "Query data storage statistics, including incremental and full data, and support querying at hourly or daily time intervals",
+                "description": "Query DA signer statistics, including incremental, active and full data, and support querying at hourly or daily time intervals",
                 "consumes": [
                     "application/json"
                 ],
@@ -1079,9 +748,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "statistic"
+                    "DA statistic"
                 ],
-                "summary": "Data storage statistics",
+                "summary": "DA signer statistics",
                 "parameters": [
                     {
                         "minimum": 0,
@@ -1147,7 +816,101 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "Data": {
-                                            "$ref": "#/definitions/api.DataStatList"
+                                            "$ref": "#/definitions/api.DASignerStatList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "600": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/api.BusinessError"
+                        }
+                    }
+                }
+            }
+        },
+        "/stats/storage": {
+            "get": {
+                "description": "Query DA data storage statistics, including incremental and full data, and support querying at hourly or daily time intervals",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DA statistic"
+                ],
+                "summary": "DA data storage statistics",
+                "parameters": [
+                    {
+                        "minimum": 0,
+                        "type": "integer",
+                        "default": 0,
+                        "description": "The number of skipped records, usually it's pageSize * (pageNumber - 1)",
+                        "name": "skip",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 2000,
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 10,
+                        "description": "The number of records displayed on the page",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Timestamp in seconds",
+                        "name": "minTimestamp",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Timestamp in seconds",
+                        "name": "maxTimestamp",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "hour",
+                            "day"
+                        ],
+                        "type": "string",
+                        "default": "day",
+                        "description": "Statistics interval",
+                        "name": "intervalType",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "default": "desc",
+                        "description": "Sort by timestamp",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/api.BusinessError"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "Data": {
+                                            "$ref": "#/definitions/api.DADataStatList"
                                         }
                                     }
                                 }
@@ -1203,7 +966,7 @@ const docTemplate = `{
         },
         "/txs": {
             "get": {
-                "description": "Query storage transactions",
+                "description": "Query DA transactions",
                 "consumes": [
                     "application/json"
                 ],
@@ -1211,9 +974,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "transaction"
+                    "DA transaction"
                 ],
-                "summary": "Storage transaction list",
+                "summary": "DA transaction list",
                 "parameters": [
                     {
                         "minimum": 0,
@@ -1257,7 +1020,78 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "Data": {
-                                            "$ref": "#/definitions/api.StorageTxList"
+                                            "$ref": "#/definitions/api.DATxList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "600": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/api.BusinessError"
+                        }
+                    }
+                }
+            }
+        },
+        "/txs/{blockNumber}/{epoch}/{quorumID}/{dataRoot}": {
+            "get": {
+                "description": "Query DA transaction by blockNumber, epoch, quorumId, dataRoot",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DA transaction"
+                ],
+                "summary": "DA transaction information",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Block number at which the file is uploaded",
+                        "name": "blockNumber",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The consecutive blocks in 0g chain is divided into groups of EpochBlocks and each group is an epoch",
+                        "name": "epoch",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Quorum id in an epoch",
+                        "name": "quorumID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Data root",
+                        "name": "dataRoot",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/api.BusinessError"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "Data": {
+                                            "$ref": "#/definitions/api.DATxInfo"
                                         }
                                     }
                                 }

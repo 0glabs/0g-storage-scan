@@ -627,291 +627,6 @@ paths:
       summary: Account's storage transaction list
       tags:
       - account
-  /da/stats/client:
-    get:
-      consumes:
-      - application/json
-      description: Query DA client statistics, including incremental, active and full
-        data, and support querying at hourly or daily time intervals
-      parameters:
-      - default: 0
-        description: The number of skipped records, usually it's pageSize * (pageNumber
-          - 1)
-        in: query
-        minimum: 0
-        name: skip
-        type: integer
-      - default: 10
-        description: The number of records displayed on the page
-        in: query
-        maximum: 2000
-        minimum: 1
-        name: limit
-        type: integer
-      - description: Timestamp in seconds
-        in: query
-        name: minTimestamp
-        type: integer
-      - description: Timestamp in seconds
-        in: query
-        name: maxTimestamp
-        type: integer
-      - default: day
-        description: Statistics interval
-        enum:
-        - hour
-        - day
-        in: query
-        name: intervalType
-        type: string
-      - default: desc
-        description: Sort by timestamp
-        enum:
-        - asc
-        - desc
-        in: query
-        name: sort
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/api.BusinessError'
-            - properties:
-                Data:
-                  $ref: '#/definitions/api.DAClientStatList'
-              type: object
-        "600":
-          description: ""
-          schema:
-            $ref: '#/definitions/api.BusinessError'
-      summary: DA client statistics
-      tags:
-      - DA statistic
-  /da/stats/signer:
-    get:
-      consumes:
-      - application/json
-      description: Query DA signer statistics, including incremental, active and full
-        data, and support querying at hourly or daily time intervals
-      parameters:
-      - default: 0
-        description: The number of skipped records, usually it's pageSize * (pageNumber
-          - 1)
-        in: query
-        minimum: 0
-        name: skip
-        type: integer
-      - default: 10
-        description: The number of records displayed on the page
-        in: query
-        maximum: 2000
-        minimum: 1
-        name: limit
-        type: integer
-      - description: Timestamp in seconds
-        in: query
-        name: minTimestamp
-        type: integer
-      - description: Timestamp in seconds
-        in: query
-        name: maxTimestamp
-        type: integer
-      - default: day
-        description: Statistics interval
-        enum:
-        - hour
-        - day
-        in: query
-        name: intervalType
-        type: string
-      - default: desc
-        description: Sort by timestamp
-        enum:
-        - asc
-        - desc
-        in: query
-        name: sort
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/api.BusinessError'
-            - properties:
-                Data:
-                  $ref: '#/definitions/api.DASignerStatList'
-              type: object
-        "600":
-          description: ""
-          schema:
-            $ref: '#/definitions/api.BusinessError'
-      summary: DA signer statistics
-      tags:
-      - DA statistic
-  /da/stats/storage:
-    get:
-      consumes:
-      - application/json
-      description: Query DA data storage statistics, including incremental and full
-        data, and support querying at hourly or daily time intervals
-      parameters:
-      - default: 0
-        description: The number of skipped records, usually it's pageSize * (pageNumber
-          - 1)
-        in: query
-        minimum: 0
-        name: skip
-        type: integer
-      - default: 10
-        description: The number of records displayed on the page
-        in: query
-        maximum: 2000
-        minimum: 1
-        name: limit
-        type: integer
-      - description: Timestamp in seconds
-        in: query
-        name: minTimestamp
-        type: integer
-      - description: Timestamp in seconds
-        in: query
-        name: maxTimestamp
-        type: integer
-      - default: day
-        description: Statistics interval
-        enum:
-        - hour
-        - day
-        in: query
-        name: intervalType
-        type: string
-      - default: desc
-        description: Sort by timestamp
-        enum:
-        - asc
-        - desc
-        in: query
-        name: sort
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/api.BusinessError'
-            - properties:
-                Data:
-                  $ref: '#/definitions/api.DADataStatList'
-              type: object
-        "600":
-          description: ""
-          schema:
-            $ref: '#/definitions/api.BusinessError'
-      summary: DA data storage statistics
-      tags:
-      - DA statistic
-  /da/txs:
-    get:
-      consumes:
-      - application/json
-      description: Query DA transactions
-      parameters:
-      - default: 0
-        description: The number of skipped records, usually it's pageSize * (pageNumber
-          - 1)
-        in: query
-        minimum: 0
-        name: skip
-        type: integer
-      - default: 10
-        description: The number of records displayed on the page
-        in: query
-        maximum: 100
-        minimum: 1
-        name: limit
-        type: integer
-      - description: The merkle root hash of the uploaded file
-        in: query
-        name: rootHash
-        type: string
-      - description: The layer1 tx hash of the submission
-        in: query
-        name: txHash
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/api.BusinessError'
-            - properties:
-                Data:
-                  $ref: '#/definitions/api.DATxList'
-              type: object
-        "600":
-          description: ""
-          schema:
-            $ref: '#/definitions/api.BusinessError'
-      summary: DA transaction list
-      tags:
-      - DA transaction
-  /da/txs/{blockNumber}/{epoch}/{quorumID}/{dataRoot}:
-    get:
-      consumes:
-      - application/json
-      description: Query DA transaction by blockNumber, epoch, quorumId, dataRoot
-      parameters:
-      - description: Block number at which the file is uploaded
-        in: path
-        name: blockNumber
-        required: true
-        type: string
-      - description: The consecutive blocks in 0g chain is divided into groups of
-          EpochBlocks and each group is an epoch
-        in: path
-        name: epoch
-        required: true
-        type: string
-      - description: Quorum id in an epoch
-        in: path
-        name: quorumID
-        required: true
-        type: string
-      - description: Data root
-        in: path
-        name: dataRoot
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/api.BusinessError'
-            - properties:
-                Data:
-                  $ref: '#/definitions/api.DATxInfo'
-              type: object
-        "600":
-          description: ""
-          schema:
-            $ref: '#/definitions/api.BusinessError'
-      summary: DA transaction information
-      tags:
-      - DA transaction
   /rewards:
     get:
       consumes:
@@ -1015,6 +730,70 @@ paths:
       summary: Address statistics
       tags:
       - statistic
+  /stats/client:
+    get:
+      consumes:
+      - application/json
+      description: Query DA client statistics, including incremental, active and full
+        data, and support querying at hourly or daily time intervals
+      parameters:
+      - default: 0
+        description: The number of skipped records, usually it's pageSize * (pageNumber
+          - 1)
+        in: query
+        minimum: 0
+        name: skip
+        type: integer
+      - default: 10
+        description: The number of records displayed on the page
+        in: query
+        maximum: 2000
+        minimum: 1
+        name: limit
+        type: integer
+      - description: Timestamp in seconds
+        in: query
+        name: minTimestamp
+        type: integer
+      - description: Timestamp in seconds
+        in: query
+        name: maxTimestamp
+        type: integer
+      - default: day
+        description: Statistics interval
+        enum:
+        - hour
+        - day
+        in: query
+        name: intervalType
+        type: string
+      - default: desc
+        description: Sort by timestamp
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/api.BusinessError'
+            - properties:
+                Data:
+                  $ref: '#/definitions/api.DAClientStatList'
+              type: object
+        "600":
+          description: ""
+          schema:
+            $ref: '#/definitions/api.BusinessError'
+      summary: DA client statistics
+      tags:
+      - DA statistic
   /stats/fee:
     get:
       consumes:
@@ -1207,12 +986,12 @@ paths:
       summary: Miner statistics
       tags:
       - statistic
-  /stats/storage:
+  /stats/signer:
     get:
       consumes:
       - application/json
-      description: Query data storage statistics, including incremental and full data,
-        and support querying at hourly or daily time intervals
+      description: Query DA signer statistics, including incremental, active and full
+        data, and support querying at hourly or daily time intervals
       parameters:
       - default: 0
         description: The number of skipped records, usually it's pageSize * (pageNumber
@@ -1262,15 +1041,79 @@ paths:
             - $ref: '#/definitions/api.BusinessError'
             - properties:
                 Data:
-                  $ref: '#/definitions/api.DataStatList'
+                  $ref: '#/definitions/api.DASignerStatList'
               type: object
         "600":
           description: ""
           schema:
             $ref: '#/definitions/api.BusinessError'
-      summary: Data storage statistics
+      summary: DA signer statistics
       tags:
-      - statistic
+      - DA statistic
+  /stats/storage:
+    get:
+      consumes:
+      - application/json
+      description: Query DA data storage statistics, including incremental and full
+        data, and support querying at hourly or daily time intervals
+      parameters:
+      - default: 0
+        description: The number of skipped records, usually it's pageSize * (pageNumber
+          - 1)
+        in: query
+        minimum: 0
+        name: skip
+        type: integer
+      - default: 10
+        description: The number of records displayed on the page
+        in: query
+        maximum: 2000
+        minimum: 1
+        name: limit
+        type: integer
+      - description: Timestamp in seconds
+        in: query
+        name: minTimestamp
+        type: integer
+      - description: Timestamp in seconds
+        in: query
+        name: maxTimestamp
+        type: integer
+      - default: day
+        description: Statistics interval
+        enum:
+        - hour
+        - day
+        in: query
+        name: intervalType
+        type: string
+      - default: desc
+        description: Sort by timestamp
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/api.BusinessError'
+            - properties:
+                Data:
+                  $ref: '#/definitions/api.DADataStatList'
+              type: object
+        "600":
+          description: ""
+          schema:
+            $ref: '#/definitions/api.BusinessError'
+      summary: DA data storage statistics
+      tags:
+      - DA statistic
   /stats/summary:
     get:
       description: Query statistics summary includes `storage fee` and `log sync height`
@@ -1297,7 +1140,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Query storage transactions
+      description: Query DA transactions
       parameters:
       - default: 0
         description: The number of skipped records, usually it's pageSize * (pageNumber
@@ -1331,15 +1174,61 @@ paths:
             - $ref: '#/definitions/api.BusinessError'
             - properties:
                 Data:
-                  $ref: '#/definitions/api.StorageTxList'
+                  $ref: '#/definitions/api.DATxList'
               type: object
         "600":
           description: ""
           schema:
             $ref: '#/definitions/api.BusinessError'
-      summary: Storage transaction list
+      summary: DA transaction list
       tags:
-      - transaction
+      - DA transaction
+  /txs/{blockNumber}/{epoch}/{quorumID}/{dataRoot}:
+    get:
+      consumes:
+      - application/json
+      description: Query DA transaction by blockNumber, epoch, quorumId, dataRoot
+      parameters:
+      - description: Block number at which the file is uploaded
+        in: path
+        name: blockNumber
+        required: true
+        type: string
+      - description: The consecutive blocks in 0g chain is divided into groups of
+          EpochBlocks and each group is an epoch
+        in: path
+        name: epoch
+        required: true
+        type: string
+      - description: Quorum id in an epoch
+        in: path
+        name: quorumID
+        required: true
+        type: string
+      - description: Data root
+        in: path
+        name: dataRoot
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/api.BusinessError'
+            - properties:
+                Data:
+                  $ref: '#/definitions/api.DATxInfo'
+              type: object
+        "600":
+          description: ""
+          schema:
+            $ref: '#/definitions/api.BusinessError'
+      summary: DA transaction information
+      tags:
+      - DA transaction
   /txs/{txSeq}:
     get:
       consumes:
