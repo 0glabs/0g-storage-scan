@@ -9,7 +9,7 @@ services:
     environment:
       - 0G_SCAN_LOG_LEVEL=info
     network_mode: host
-    container_name: 0g-scan-sync
+  #    container_name: 0g-scan-sync
 
   stat:
     image: 0g-scan:latest
@@ -18,7 +18,7 @@ services:
     environment:
       - 0G_SCAN_LOG_LEVEL=info
     network_mode: host
-    container_name: 0g-scan-stat
+  #    container_name: 0g-scan-stat
 
   api:
     image: 0g-scan:latest
@@ -26,9 +26,9 @@ services:
     restart: unless-stopped
     environment:
       - 0G_SCAN_LOG_LEVEL=info
-      - 0G_SCAN_API_ENDPOINT=:16451
+      - 0G_SCAN_API_ENDPOINT=:${API_LISTEN_PORT:-16451}
     network_mode: host
-    container_name: 0g-scan-api
+  #    container_name: 0g-scan-api
 
   da_api:
     image: 0g-scan:latest
@@ -36,6 +36,6 @@ services:
     restart: unless-stopped
     environment:
       - 0G_SCAN_LOG_LEVEL=info
-      - 0G_SCAN_API_ENDPOINT=:16751
+      - 0G_SCAN_API_ENDPOINT=:${API_LISTEN_PORT:-16751}
     network_mode: host
-    container_name: 0g-scan-da-api
+#    container_name: 0g-scan-da-api
