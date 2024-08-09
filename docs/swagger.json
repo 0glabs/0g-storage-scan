@@ -200,6 +200,288 @@
                 }
             }
         },
+        "/da/stats/client": {
+            "get": {
+                "description": "Query DA client statistics, including incremental, active and full data, and support querying at hourly or daily time intervals",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "statistic"
+                ],
+                "summary": "DA client statistics",
+                "parameters": [
+                    {
+                        "minimum": 0,
+                        "type": "integer",
+                        "default": 0,
+                        "description": "The number of skipped records, usually it's pageSize * (pageNumber - 1)",
+                        "name": "skip",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 2000,
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 10,
+                        "description": "The number of records displayed on the page",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Timestamp in seconds",
+                        "name": "minTimestamp",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Timestamp in seconds",
+                        "name": "maxTimestamp",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "hour",
+                            "day"
+                        ],
+                        "type": "string",
+                        "default": "day",
+                        "description": "Statistics interval",
+                        "name": "intervalType",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "default": "desc",
+                        "description": "Sort by timestamp",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/api.BusinessError"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "Data": {
+                                            "$ref": "#/definitions/api.DAClientStatList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "600": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/api.BusinessError"
+                        }
+                    }
+                }
+            }
+        },
+        "/da/stats/signer": {
+            "get": {
+                "description": "Query DA signer statistics, including incremental, active and full data, and support querying at hourly or daily time intervals",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "statistic"
+                ],
+                "summary": "DA signer statistics",
+                "parameters": [
+                    {
+                        "minimum": 0,
+                        "type": "integer",
+                        "default": 0,
+                        "description": "The number of skipped records, usually it's pageSize * (pageNumber - 1)",
+                        "name": "skip",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 2000,
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 10,
+                        "description": "The number of records displayed on the page",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Timestamp in seconds",
+                        "name": "minTimestamp",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Timestamp in seconds",
+                        "name": "maxTimestamp",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "hour",
+                            "day"
+                        ],
+                        "type": "string",
+                        "default": "day",
+                        "description": "Statistics interval",
+                        "name": "intervalType",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "default": "desc",
+                        "description": "Sort by timestamp",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/api.BusinessError"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "Data": {
+                                            "$ref": "#/definitions/api.DASignerStatList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "600": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/api.BusinessError"
+                        }
+                    }
+                }
+            }
+        },
+        "/da/stats/storage": {
+            "get": {
+                "description": "Query DA data storage statistics, including incremental and full data, and support querying at hourly or daily time intervals",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "statistic"
+                ],
+                "summary": "DA data storage statistics",
+                "parameters": [
+                    {
+                        "minimum": 0,
+                        "type": "integer",
+                        "default": 0,
+                        "description": "The number of skipped records, usually it's pageSize * (pageNumber - 1)",
+                        "name": "skip",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 2000,
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 10,
+                        "description": "The number of records displayed on the page",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Timestamp in seconds",
+                        "name": "minTimestamp",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Timestamp in seconds",
+                        "name": "maxTimestamp",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "hour",
+                            "day"
+                        ],
+                        "type": "string",
+                        "default": "day",
+                        "description": "Statistics interval",
+                        "name": "intervalType",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "default": "desc",
+                        "description": "Sort by timestamp",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/api.BusinessError"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "Data": {
+                                            "$ref": "#/definitions/api.DADataStatList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "600": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/api.BusinessError"
+                        }
+                    }
+                }
+            }
+        },
         "/da/txs": {
             "get": {
                 "description": "Query DA transactions",
@@ -1112,6 +1394,135 @@
                 "data": {},
                 "message": {
                     "type": "string"
+                }
+            }
+        },
+        "api.DAClientStat": {
+            "description": "DA client information",
+            "type": "object",
+            "properties": {
+                "clientActive": {
+                    "description": "Number of active da client in a specific time interval",
+                    "type": "integer"
+                },
+                "clientNew": {
+                    "description": "Number of da client in a specific time interval",
+                    "type": "integer"
+                },
+                "clientTotal": {
+                    "description": "Total number of da client by a certain time",
+                    "type": "integer"
+                },
+                "statTime": {
+                    "description": "Statistics time",
+                    "type": "string"
+                }
+            }
+        },
+        "api.DAClientStatList": {
+            "description": "DA client stat list",
+            "type": "object",
+            "properties": {
+                "list": {
+                    "description": "Stat list",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.DAClientStat"
+                    }
+                },
+                "total": {
+                    "description": "The total number of stat returned",
+                    "type": "integer"
+                }
+            }
+        },
+        "api.DADataStat": {
+            "description": "DA storage data information",
+            "type": "object",
+            "properties": {
+                "blobNew": {
+                    "description": "Number of blobs in a specific time interval",
+                    "type": "integer"
+                },
+                "blobTotal": {
+                    "description": "Total number of blobs by a certain time",
+                    "type": "integer"
+                },
+                "dataSizeNew": {
+                    "description": "Size of storage data in a specific time interval",
+                    "type": "integer"
+                },
+                "dataSizeTotal": {
+                    "description": "Total size of storage data by a certain time",
+                    "type": "integer"
+                },
+                "statTime": {
+                    "description": "Statistics time",
+                    "type": "string"
+                },
+                "storageFeeNew": {
+                    "description": "Storage fee in a specific time interval",
+                    "type": "number"
+                },
+                "storageFeeTotal": {
+                    "description": "Total storage fee by a certain time",
+                    "type": "number"
+                }
+            }
+        },
+        "api.DADataStatList": {
+            "description": "DA storage data list",
+            "type": "object",
+            "properties": {
+                "list": {
+                    "description": "Stat list",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.DADataStat"
+                    }
+                },
+                "total": {
+                    "description": "The total number of stat returned",
+                    "type": "integer"
+                }
+            }
+        },
+        "api.DASignerStat": {
+            "description": "DA signer information",
+            "type": "object",
+            "properties": {
+                "signerActive": {
+                    "description": "Number of active da signer in a specific time interval",
+                    "type": "integer"
+                },
+                "signerNew": {
+                    "description": "Number of da signer in a specific time interval",
+                    "type": "integer"
+                },
+                "signerTotal": {
+                    "description": "Total number of da signer by a certain time",
+                    "type": "integer"
+                },
+                "statTime": {
+                    "description": "Statistics time",
+                    "type": "string"
+                }
+            }
+        },
+        "api.DASignerStatList": {
+            "description": "DA signer stat list",
+            "type": "object",
+            "properties": {
+                "list": {
+                    "description": "Stat list",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.DASignerStat"
+                    }
+                },
+                "total": {
+                    "description": "The total number of stat returned",
+                    "type": "integer"
                 }
             }
         },
