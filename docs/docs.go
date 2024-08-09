@@ -218,7 +218,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "statistic"
+                    "DA statistic"
                 ],
                 "summary": "DA client statistics",
                 "parameters": [
@@ -312,7 +312,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "statistic"
+                    "DA statistic"
                 ],
                 "summary": "DA signer statistics",
                 "parameters": [
@@ -406,7 +406,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "statistic"
+                    "DA statistic"
                 ],
                 "summary": "DA data storage statistics",
                 "parameters": [

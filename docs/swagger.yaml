@@ -690,7 +690,7 @@ paths:
             $ref: '#/definitions/api.BusinessError'
       summary: DA client statistics
       tags:
-      - statistic
+      - DA statistic
   /da/stats/signer:
     get:
       consumes:
@@ -754,7 +754,7 @@ paths:
             $ref: '#/definitions/api.BusinessError'
       summary: DA signer statistics
       tags:
-      - statistic
+      - DA statistic
   /da/stats/storage:
     get:
       consumes:
@@ -818,7 +818,7 @@ paths:
             $ref: '#/definitions/api.BusinessError'
       summary: DA data storage statistics
       tags:
-      - statistic
+      - DA statistic
   /da/txs:
     get:
       consumes:
