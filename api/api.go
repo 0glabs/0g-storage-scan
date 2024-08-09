@@ -90,11 +90,17 @@ func RegisterRouter(router *gin.Engine) {
 	accountsRoute.GET(":address/txs", listAddressTxsHandler)
 	accountsRoute.GET(":address/rewards", listAddressRewardsHandler)
 
-	daTxsRoute := apiRoute.Group("/da/txs")
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+}
+
+func RegisterDARouter(router *gin.Engine) {
+	apiRoute := router.Group(BasePath)
+
+	daTxsRoute := apiRoute.Group("/txs")
 	daTxsRoute.GET("", listDATxsHandler)
 	daTxsRoute.GET(":blockNumber/:epoch/:quorumID/:dataRoot", getDATxHandler)
 
-	daStatsRoute := apiRoute.Group("/da/stats")
+	daStatsRoute := apiRoute.Group("/stats")
 	daStatsRoute.GET("storage", listDADataStatsHandler)
 	daStatsRoute.GET("client", listDAClientStatsHandler)
 	daStatsRoute.GET("signer", listDASignerStatsHandler)
