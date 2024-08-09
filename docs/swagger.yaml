@@ -56,6 +56,99 @@ definitions:
       message:
         type: string
     type: object
+  api.DAClientStat:
+    description: DA client information
+    properties:
+      clientActive:
+        description: Number of active da client in a specific time interval
+        type: integer
+      clientNew:
+        description: Number of da client in a specific time interval
+        type: integer
+      clientTotal:
+        description: Total number of da client by a certain time
+        type: integer
+      statTime:
+        description: Statistics time
+        type: string
+    type: object
+  api.DAClientStatList:
+    description: DA client stat list
+    properties:
+      list:
+        description: Stat list
+        items:
+          $ref: '#/definitions/api.DAClientStat'
+        type: array
+      total:
+        description: The total number of stat returned
+        type: integer
+    type: object
+  api.DADataStat:
+    description: DA storage data information
+    properties:
+      blobNew:
+        description: Number of blobs in a specific time interval
+        type: integer
+      blobTotal:
+        description: Total number of blobs by a certain time
+        type: integer
+      dataSizeNew:
+        description: Size of storage data in a specific time interval
+        type: integer
+      dataSizeTotal:
+        description: Total size of storage data by a certain time
+        type: integer
+      statTime:
+        description: Statistics time
+        type: string
+      storageFeeNew:
+        description: Storage fee in a specific time interval
+        type: number
+      storageFeeTotal:
+        description: Total storage fee by a certain time
+        type: number
+    type: object
+  api.DADataStatList:
+    description: DA storage data list
+    properties:
+      list:
+        description: Stat list
+        items:
+          $ref: '#/definitions/api.DADataStat'
+        type: array
+      total:
+        description: The total number of stat returned
+        type: integer
+    type: object
+  api.DASignerStat:
+    description: DA signer information
+    properties:
+      signerActive:
+        description: Number of active da signer in a specific time interval
+        type: integer
+      signerNew:
+        description: Number of da signer in a specific time interval
+        type: integer
+      signerTotal:
+        description: Total number of da signer by a certain time
+        type: integer
+      statTime:
+        description: Statistics time
+        type: string
+    type: object
+  api.DASignerStatList:
+    description: DA signer stat list
+    properties:
+      list:
+        description: Stat list
+        items:
+          $ref: '#/definitions/api.DASignerStat'
+        type: array
+      total:
+        description: The total number of stat returned
+        type: integer
+    type: object
   api.DATxInfo:
     description: DA submission transaction information
     properties:
@@ -534,6 +627,198 @@ paths:
       summary: Account's storage transaction list
       tags:
       - account
+  /da/stats/client:
+    get:
+      consumes:
+      - application/json
+      description: Query DA client statistics, including incremental, active and full
+        data, and support querying at hourly or daily time intervals
+      parameters:
+      - default: 0
+        description: The number of skipped records, usually it's pageSize * (pageNumber
+          - 1)
+        in: query
+        minimum: 0
+        name: skip
+        type: integer
+      - default: 10
+        description: The number of records displayed on the page
+        in: query
+        maximum: 2000
+        minimum: 1
+        name: limit
+        type: integer
+      - description: Timestamp in seconds
+        in: query
+        name: minTimestamp
+        type: integer
+      - description: Timestamp in seconds
+        in: query
+        name: maxTimestamp
+        type: integer
+      - default: day
+        description: Statistics interval
+        enum:
+        - hour
+        - day
+        in: query
+        name: intervalType
+        type: string
+      - default: desc
+        description: Sort by timestamp
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/api.BusinessError'
+            - properties:
+                Data:
+                  $ref: '#/definitions/api.DAClientStatList'
+              type: object
+        "600":
+          description: ""
+          schema:
+            $ref: '#/definitions/api.BusinessError'
+      summary: DA client statistics
+      tags:
+      - statistic
+  /da/stats/signer:
+    get:
+      consumes:
+      - application/json
+      description: Query DA signer statistics, including incremental, active and full
+        data, and support querying at hourly or daily time intervals
+      parameters:
+      - default: 0
+        description: The number of skipped records, usually it's pageSize * (pageNumber
+          - 1)
+        in: query
+        minimum: 0
+        name: skip
+        type: integer
+      - default: 10
+        description: The number of records displayed on the page
+        in: query
+        maximum: 2000
+        minimum: 1
+        name: limit
+        type: integer
+      - description: Timestamp in seconds
+        in: query
+        name: minTimestamp
+        type: integer
+      - description: Timestamp in seconds
+        in: query
+        name: maxTimestamp
+        type: integer
+      - default: day
+        description: Statistics interval
+        enum:
+        - hour
+        - day
+        in: query
+        name: intervalType
+        type: string
+      - default: desc
+        description: Sort by timestamp
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/api.BusinessError'
+            - properties:
+                Data:
+                  $ref: '#/definitions/api.DASignerStatList'
+              type: object
+        "600":
+          description: ""
+          schema:
+            $ref: '#/definitions/api.BusinessError'
+      summary: DA signer statistics
+      tags:
+      - statistic
+  /da/stats/storage:
+    get:
+      consumes:
+      - application/json
+      description: Query DA data storage statistics, including incremental and full
+        data, and support querying at hourly or daily time intervals
+      parameters:
+      - default: 0
+        description: The number of skipped records, usually it's pageSize * (pageNumber
+          - 1)
+        in: query
+        minimum: 0
+        name: skip
+        type: integer
+      - default: 10
+        description: The number of records displayed on the page
+        in: query
+        maximum: 2000
+        minimum: 1
+        name: limit
+        type: integer
+      - description: Timestamp in seconds
+        in: query
+        name: minTimestamp
+        type: integer
+      - description: Timestamp in seconds
+        in: query
+        name: maxTimestamp
+        type: integer
+      - default: day
+        description: Statistics interval
+        enum:
+        - hour
+        - day
+        in: query
+        name: intervalType
+        type: string
+      - default: desc
+        description: Sort by timestamp
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/api.BusinessError'
+            - properties:
+                Data:
+                  $ref: '#/definitions/api.DADataStatList'
+              type: object
+        "600":
+          description: ""
+          schema:
+            $ref: '#/definitions/api.BusinessError'
+      summary: DA data storage statistics
+      tags:
+      - statistic
   /da/txs:
     get:
       consumes:
