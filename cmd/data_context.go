@@ -60,9 +60,10 @@ var migrationModels = []interface{}{
 	&store.Miner{},
 	&store.MinerStat{},
 	&store.DASigner{},
+	&store.DASignerStat{},
 	&store.DASubmit{},
-	&store.DAReward{},
 	&store.DASubmitStat{},
+	&store.DAReward{},
 	&store.DAClient{},
 	&store.DAClientStat{},
 }

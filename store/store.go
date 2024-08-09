@@ -28,6 +28,7 @@ type MysqlStore struct {
 	*MinerStore
 	*MinerStatStore
 	*DASignerStore
+	*DASignerStatStore
 	*DASubmitStore
 	*DARewardStore
 	*DASubmitStatStore
@@ -50,6 +51,7 @@ func MustNewStore(db *gorm.DB) *MysqlStore {
 		MinerStore:         newMinerStore(db),
 		MinerStatStore:     newMinerStatStore(db),
 		DASignerStore:      newDASignerStore(db),
+		DASignerStatStore:  newDASignerStatStore(db),
 		DASubmitStore:      newDASubmitStore(db),
 		DARewardStore:      newDARewardStore(db),
 		DASubmitStatStore:  newDASubmitStatStore(db),

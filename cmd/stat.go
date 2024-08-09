@@ -47,6 +47,8 @@ func startStatService(*cobra.Command, []string) {
 	go stDASubmit.DoStat(ctx, &wg)
 	stDAClient := stat.MustNewStatDAClient(&cfg, dataCtx.DB, dataCtx.Eth, startTime)
 	go stDAClient.DoStat(ctx, &wg)
+	stDASigner := stat.MustNewStatDASigner(&cfg, dataCtx.DB, dataCtx.Eth, startTime)
+	go stDASigner.DoStat(ctx, &wg)
 
 	GracefulShutdown(&wg, cancel)
 }
