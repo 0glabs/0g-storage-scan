@@ -194,6 +194,20 @@ func (ss *SubmitStore) GetUnfinalizedLatest(batch int) ([]Submit, error) {
 	return *submits, nil
 }
 
+func (ss *SubmitStore) MaxSubmissionIndex() (uint64, error) {
+	var maxId sql.NullInt64
+
+	if err := ss.DB.Model(&Submit{}).Select("MAX(submission_index)").Find(&maxId).Error; err != nil {
+		return 0, err
+	}
+
+	if !maxId.Valid {
+		return 0, errors.New("Invalid submission index")
+	}
+
+	return uint64(maxId.Int64), nil
+}
+
 const (
 	Min    = "1m"
 	TenMin = "10m"
