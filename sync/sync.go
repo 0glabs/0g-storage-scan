@@ -377,5 +377,25 @@ func (s *Syncer) parseEthData(data *rpc.EthData) (*store.DecodedLogs, error) {
 		return nil, err
 	}
 
+	/*// check submits
+	preSeq, err := s.db.SubmitStore.MaxSubmissionIndex()
+	if err != nil {
+		return nil, errors.WithMessagef(err, "Check submits error at block %v", data.Block.Number.Uint64())
+	}
+	submits := decodedLogs.Submits
+	for i := 0; i < len(submits); i++ {
+		if submits[i].SubmissionIndex != preSeq+1 {
+			logsJ, _ := json.Marshal(logs)
+			decodedLogsJ, _ := json.Marshal(decodedLogs)
+			logrus.WithFields(logrus.Fields{
+				"bn":          data.Block.Number.Uint64(),
+				"logs":        string(logsJ),
+				"decodedLogs": string(decodedLogsJ),
+			}).Info("Check submits error")
+			return nil, errors.Errorf("Check submits error at block %v", data.Block.Number.Uint64())
+		}
+		preSeq = submits[i].SubmissionIndex
+	}*/
+
 	return decodedLogs, nil
 }

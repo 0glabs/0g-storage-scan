@@ -7,6 +7,6 @@ import (
 )
 
 func main() {
-	config.MustInit("0g_scan")
+	config.MustInit("zg_scan")
 	cmd.Execute()
 }
