@@ -2,7 +2,6 @@ package sync
 
 import (
 	"context"
-	"encoding/json"
 	"strings"
 	"sync"
 	"time"
@@ -378,7 +377,7 @@ func (s *Syncer) parseEthData(data *rpc.EthData) (*store.DecodedLogs, error) {
 		return nil, err
 	}
 
-	// check submits
+	/*// check submits
 	preSeq, err := s.db.SubmitStore.MaxSubmissionIndex()
 	if err != nil {
 		return nil, errors.WithMessagef(err, "Check submits error at block %v", data.Block.Number.Uint64())
@@ -396,7 +395,7 @@ func (s *Syncer) parseEthData(data *rpc.EthData) (*store.DecodedLogs, error) {
 			return nil, errors.Errorf("Check submits error at block %v", data.Block.Number.Uint64())
 		}
 		preSeq = submits[i].SubmissionIndex
-	}
+	}*/
 
 	return decodedLogs, nil
 }
