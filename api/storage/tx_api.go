@@ -3,7 +3,10 @@ package storage
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"strconv"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/0glabs/0g-storage-client/core"
 	scanApi "github.com/0glabs/0g-storage-scan/api"
@@ -87,6 +90,7 @@ func getStorageTx(c *gin.Context) (interface{}, error) {
 
 	hash := common.HexToHash(submit.TxHash)
 	tx, err := sdk.Eth.TransactionByHash(hash)
+	logrus.WithError(err).Info(fmt.Sprintf("debug ---1--- hash %v", hash))
 	if err != nil {
 		return nil, scanApi.ErrBlockchainRPC(errors.WithMessagef(err, "Failed to get transaction, txSeq %v", txSeq))
 	}
