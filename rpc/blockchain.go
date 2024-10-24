@@ -2,6 +2,7 @@ package rpc
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/0glabs/0g-storage-scan/metrics"
@@ -207,8 +208,15 @@ func BatchGetBlockTimes(ctx context.Context, w3c *web3go.Client, blkNums []types
 
 type AlertContent struct {
 	URL     string
-	Err     string
+	Reason  string
 	Elapsed time.Duration
+}
+
+func (c AlertContent) String() string {
+	if c.URL == "" {
+		return fmt.Sprintf("---\nReason: %s\nElapsed: %v", c.Reason, c.Elapsed)
+	}
+	return fmt.Sprintf("---\nReason: %s\nURL: %s\nElapsed: %v", c.Reason, c.URL, c.Elapsed)
 }
 
 func AlertErr(ctx context.Context, title, channel string, err error,
@@ -227,7 +235,7 @@ func AlertErr(ctx context.Context, title, channel string, err error,
 	if err == nil {
 		if recovered, elapsed := health.OnSuccess(report); recovered {
 			return ch.Send(ctx, &alert.Notification{
-				Title: title, Content: AlertContent{url, "Recovered", elapsed},
+				Title: title, Content: AlertContent{url, "Recovered", elapsed}.String(),
 				Severity: alert.SeverityLow,
 			})
 		}
@@ -236,7 +244,7 @@ func AlertErr(ctx context.Context, title, channel string, err error,
 
 	if unhealthy, unrecovered, elapsed := health.OnFailure(report); unhealthy || unrecovered {
 		return ch.Send(ctx, &alert.Notification{
-			Title: title, Content: AlertContent{url, err.Error(), elapsed},
+			Title: title, Content: AlertContent{url, err.Error(), elapsed}.String(),
 			Severity: alert.SeverityHigh,
 		})
 	}

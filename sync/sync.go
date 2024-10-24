@@ -29,6 +29,7 @@ type Syncer struct {
 	sdk                 *web3go.Client
 	db                  *store.MysqlStore
 	currentBlock        uint64
+	latestBlock         uint64
 	syncIntervalNormal  time.Duration
 	syncIntervalCatchUp time.Duration
 	catchupSyncer       *CatchupSyncer
@@ -213,7 +214,11 @@ func (s *Syncer) syncOnce(ctx context.Context) (bool, error) {
 	// get the latest block
 	latestBlock, err := s.sdk.Eth.BlockNumber()
 	if s.catchupSyncer.alertChannel != "" {
-		if e := rpc.AlertErr(ctx, "BlockchainRPCError", s.catchupSyncer.alertChannel, err,
+		e := err
+		if e == nil && latestBlock.Uint64() <= s.latestBlock {
+			e = errors.Errorf("Blockchain height stops growing at %v", latestBlock)
+		}
+		if e = rpc.AlertErr(ctx, "BlockchainRPCError", s.catchupSyncer.alertChannel, e,
 			s.catchupSyncer.healthReport, &s.catchupSyncer.nodeRpcHealth); e != nil {
 			return false, e
 		}
@@ -221,6 +226,7 @@ func (s *Syncer) syncOnce(ctx context.Context) (bool, error) {
 	if err != nil {
 		return false, err
 	}
+	s.latestBlock = latestBlock.Uint64()
 
 	// check latest block
 	curBlock := s.currentBlock
