@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -221,6 +222,157 @@ func (ss *StorageSyncer) setStorageClassChunked(class string, rootHashes []strin
 		}
 	}
 	return nil
+}
+
+// RefreshNodeTypes tags storage nodes as hot and/or regular by reconciling against
+// two independent sources: the regular indexer's node list (indexer_getShardedNodes)
+// and the hot router's provider list (GET /providers). A single host can be both.
+// Each source is reconciled independently and is NEVER cleared on its own fetch
+// failure (outage safety). These lists change rarely, so it runs daily.
+func (ss *StorageSyncer) RefreshNodeTypes(ctx context.Context, ticker *time.Ticker) {
+	if interrupted(ctx) {
+		return
+	}
+
+	cfg := ss.storageConfig
+	if cfg.Indexer == "" && cfg.HotRouter == "" {
+		ticker.Reset(time.Hour) // nothing to tag
+		return
+	}
+
+	interval := cfg.NodeTypeRefreshInterval
+	if interval <= 0 {
+		interval = 24 * time.Hour
+	}
+	limit := cfg.NodeTypePageLimit
+	if limit <= 0 {
+		limit = 2000
+	}
+
+	failed := false
+
+	// Regular source: indexer node list. Skip the reconcile (no clearing) on a fetch error.
+	if cfg.Indexer != "" {
+		if urls, err := rpc.GetShardedNodes(cfg); err != nil {
+			logrus.WithError(err).Warn("Failed to fetch regular node list from indexer; skipping regular node-type reconcile")
+			failed = true
+		} else if err := ss.reconcileRegularNodes(urls); err != nil {
+			logrus.WithError(err).Error("Failed to reconcile regular node types")
+			failed = true
+		}
+	}
+
+	// Hot source: router provider list. Skip the reconcile (no clearing) on a fetch error.
+	if cfg.HotRouter != "" {
+		if providers, err := ss.fetchHotProviders(cfg, limit); err != nil {
+			logrus.WithError(err).Warn("Failed to fetch hot providers from router; skipping hot node-type reconcile")
+			failed = true
+		} else if err := ss.reconcileHotNodes(providers); err != nil {
+			logrus.WithError(err).Error("Failed to reconcile hot node types")
+			failed = true
+		}
+	}
+
+	if failed {
+		ticker.Reset(intervalException)
+		return
+	}
+	ticker.Reset(interval)
+}
+
+func (ss *StorageSyncer) fetchHotProviders(cfg rpc.StorageConfig, limit int) ([]rpc.ProviderInfo, error) {
+	var all []rpc.ProviderInfo
+	cursor := ""
+	for {
+		page, next, err := rpc.ListProviders(cfg, cursor, limit)
+		if err != nil {
+			return nil, err
+		}
+		all = append(all, page...)
+		if next == "" {
+			break
+		}
+		cursor = next
+	}
+	return all, nil
+}
+
+func (ss *StorageSyncer) reconcileRegularNodes(urls []string) error {
+	present := make(map[string]string, len(urls)) // host -> representative url
+	for _, u := range urls {
+		if h := hostFromURL(u); h != "" {
+			present[h] = u
+		}
+	}
+
+	nodes := make([]store.StorageNodeType, 0, len(present))
+	for h, u := range present {
+		nodes = append(nodes, store.StorageNodeType{Host: h, URL: u})
+	}
+	if err := ss.db.StorageNodeTypeStore.UpsertRegular(nodes); err != nil {
+		return err
+	}
+
+	current, err := ss.db.StorageNodeTypeStore.RegularHosts()
+	if err != nil {
+		return err
+	}
+	toClear := make([]string, 0)
+	for _, h := range current {
+		if _, ok := present[h]; !ok {
+			toClear = append(toClear, h)
+		}
+	}
+	return ss.db.StorageNodeTypeStore.ClearRegular(toClear)
+}
+
+func (ss *StorageSyncer) reconcileHotNodes(providers []rpc.ProviderInfo) error {
+	present := make(map[string]store.StorageNodeType, len(providers)) // host -> node
+	for _, p := range providers {
+		if !p.Active {
+			continue // inactive providers are not hot
+		}
+		if h := hostFromURL(p.URL); h != "" {
+			present[h] = store.StorageNodeType{Host: h, URL: p.URL, ProviderAddr: p.Address}
+		}
+	}
+
+	nodes := make([]store.StorageNodeType, 0, len(present))
+	for _, n := range present {
+		nodes = append(nodes, n)
+	}
+	if err := ss.db.StorageNodeTypeStore.UpsertHot(nodes); err != nil {
+		return err
+	}
+
+	current, err := ss.db.StorageNodeTypeStore.HotHosts()
+	if err != nil {
+		return err
+	}
+	toClear := make([]string, 0)
+	for _, h := range current {
+		if _, ok := present[h]; !ok {
+			toClear = append(toClear, h)
+		}
+	}
+	return ss.db.StorageNodeTypeStore.ClearHot(toClear)
+}
+
+// hostFromURL extracts the host (hostname or IP, port stripped) from a node URL,
+// matching the frontend's extractIp (URL.hostname). Falls back to scheme-less
+// "host:port" parsing, then to the raw string.
+func hostFromURL(raw string) string {
+	raw = strings.TrimSpace(raw)
+	if raw == "" {
+		return ""
+	}
+	if u, err := url.Parse(raw); err == nil && u.Hostname() != "" {
+		return u.Hostname()
+	}
+	if u, err := url.Parse("//" + raw); err == nil && u.Hostname() != "" {
+		return u.Hostname()
+	}
+	return raw
 }
 
 // checkSyncHeightGaps monitors sync height differences and returns error if gaps exceed 1000 blocks

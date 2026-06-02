@@ -64,6 +64,7 @@ var migrationModels = []interface{}{
 	&store.DAClient{},
 	&store.DAClientStat{},
 	&store.RateLimit{},
+	&store.StorageNodeType{},
 }
 
 func MustInitDataContext() DataContext {
