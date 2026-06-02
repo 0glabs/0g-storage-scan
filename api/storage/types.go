@@ -21,6 +21,7 @@ type listStorageTxParam struct {
 	PageParam
 	RootHash     *string `form:"rootHash" binding:"omitempty"`
 	TxHash       *string `form:"txHash" binding:"omitempty"`
+	StorageClass *string `form:"storageClass" binding:"omitempty,oneof=hot standard"`
 	MinTimestamp *int    `form:"minTimestamp" binding:"omitempty,number"`
 	MaxTimestamp *int    `form:"maxTimestamp" binding:"omitempty,number"`
 }
@@ -206,6 +207,8 @@ type StorageTxInfo struct {
 
 	Segments         uint64 `json:"segments"`         // The total number of segments the file is split into
 	UploadedSegments uint64 `json:"uploadedSegments"` // The number of segments the file has been uploaded
+
+	StorageClass string `json:"storageClass"` // Storage class: "hot" (cached on a hot-storage provider) or "standard"
 }
 
 // StorageTxDetail model info
@@ -233,6 +236,8 @@ type StorageTxDetail struct {
 	GasFee   uint64 `json:"gasFee"`   // The gas fee of the transaction on layer1
 	GasUsed  uint64 `json:"gasUsed"`  // The gas used of the transaction on layer1
 	GasLimit uint64 `json:"gasLimit"` // The gas limit of the transaction on layer1
+
+	StorageClass string `json:"storageClass"` // Storage class: "hot" (cached on a hot-storage provider) or "standard"
 }
 
 // AccountStats model info

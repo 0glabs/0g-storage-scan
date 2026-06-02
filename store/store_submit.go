@@ -22,6 +22,14 @@ const (
 	submitPartitionSize = 10_000_000
 )
 
+// Storage class values for the storage_class column. A file is "hot" when it is
+// currently cached on a hot-storage provider (per the hot router), "standard"
+// otherwise (the default — it lives only on the base storage network).
+const (
+	StorageClassStandard = "standard"
+	StorageClassHot      = "hot"
+)
+
 type Submit struct {
 	SubmissionIndex uint64 `gorm:"primaryKey;autoIncrement:false"`
 	RootHash        string `gorm:"size:66;index:idx_root"`
@@ -37,6 +45,11 @@ type Submit struct {
 	UploadedSegNum uint64          `gorm:"not null;default:0"`
 	Status         uint8           `gorm:"not null;default:0"`
 	Fee            decimal.Decimal `gorm:"type:decimal(65);not null"`
+
+	// StorageClass is "hot" if the file is currently cached on a hot-storage
+	// provider, "standard" otherwise. Defaults to "standard" at insert time and is
+	// maintained by the storage-class reconcile worker.
+	StorageClass string `gorm:"size:20;not null;default:standard;index"`
 
 	Extra []byte `gorm:"type:mediumText"` // json field
 }
@@ -194,7 +207,34 @@ func (ss *SubmitStore) UpdateByPrimaryKeys(dbTx *gorm.DB, s *Submit, submissionI
 	return nil
 }
 
-func (ss *SubmitStore) List(rootHash *string, txHash *string, idDesc bool, skip, limit int) (int64, []Submit, error) {
+// SetStorageClassByRootHashes sets storage_class=class for the submits whose
+// root hash is in rootHashes and whose class currently differs. The "currently
+// differs" guard keeps steady-state reconcile cycles near-zero-write. Returns
+// the number of rows updated.
+func (ss *SubmitStore) SetStorageClassByRootHashes(class string, rootHashes []string) (int64, error) {
+	if len(rootHashes) == 0 {
+		return 0, nil
+	}
+	res := ss.DB.Model(&Submit{}).
+		Where("root_hash IN ?", rootHashes).
+		Where("storage_class <> ?", class).
+		Update("storage_class", class)
+	return res.RowsAffected, res.Error
+}
+
+// ListHotRootHashes returns the root hashes of all submits currently marked hot.
+// Used by the reconcile worker to find files that were evicted from the hot tier
+// (currently hot in the DB but absent from the router's hot set) so they can be
+// demoted back to standard.
+func (ss *SubmitStore) ListHotRootHashes() ([]string, error) {
+	var rootHashes []string
+	err := ss.DB.Model(&Submit{}).
+		Where("storage_class = ?", StorageClassHot).
+		Pluck("root_hash", &rootHashes).Error
+	return rootHashes, err
+}
+
+func (ss *SubmitStore) List(rootHash *string, txHash *string, storageClass *string, idDesc bool, skip, limit int) (int64, []Submit, error) {
 	dbRaw := ss.DB.Model(&Submit{})
 	var conds []func(db *gorm.DB) *gorm.DB
 	if rootHash != nil {
@@ -202,6 +242,9 @@ func (ss *SubmitStore) List(rootHash *string, txHash *string, idDesc bool, skip,
 	}
 	if txHash != nil {
 		conds = append(conds, TxHash(*txHash))
+	}
+	if storageClass != nil {
+		conds = append(conds, StorageClass(*storageClass))
 	}
 	dbRaw.Scopes(conds...)
 

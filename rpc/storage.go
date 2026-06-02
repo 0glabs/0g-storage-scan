@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/0glabs/0g-storage-client/node"
@@ -43,6 +44,14 @@ type StorageConfig struct {
 	AlertChannel          string
 	HealthReport          health.TimedCounterConfig
 	SyncGapAlertThreshold uint64 `default:"1000"`
+
+	// HotRouter is the base URL of the hot-storage router. When empty, the
+	// storage-class reconcile worker is disabled and all files stay "standard".
+	HotRouter string
+	// ClassReconcileInterval is how often the worker reconciles the hot set.
+	ClassReconcileInterval time.Duration `default:"2m"`
+	// ClassPageLimit is the page size used when paging GET /files/cached.
+	ClassPageLimit int `default:"2000"`
 }
 
 type FileInfoParam struct {
@@ -162,6 +171,41 @@ func GetNodeStatus(storageConfig StorageConfig) (*node.Status, error) {
 	}
 
 	return &status, nil
+}
+
+// CachedFilesResponse is the body of the hot router's GET /files/cached.
+type CachedFilesResponse struct {
+	Hashes     []string `json:"hashes"`
+	NextCursor string   `json:"next_cursor"`
+}
+
+// ListCachedFiles fetches one page of the hot router's cached-file set (the hot
+// set), keyset-paginated by file hash. Pass an empty cursor to start; an empty
+// returned nextCursor means there are no more pages. The router returns a plain
+// JSON body (not the indexer's BusinessError envelope), so this does not reuse
+// requestIndexer.
+func ListCachedFiles(cfg StorageConfig, cursor string, limit int) (hashes []string, nextCursor string, err error) {
+	url := fmt.Sprintf("%s/files/cached?limit=%d", strings.TrimRight(cfg.HotRouter, "/"), limit)
+	if cursor != "" {
+		url += "&cursor=" + cursor
+	}
+
+	client := resty.New()
+	if cfg.RequestTimeout > 0 {
+		client.SetTimeout(cfg.RequestTimeout)
+	}
+
+	var result CachedFilesResponse
+	resp, err := client.R().SetResult(&result).Get(url)
+	if err != nil {
+		return nil, "", errors.WithMessagef(err, "Failed to request hot router, %s", url)
+	}
+	if resp.IsError() {
+		return nil, "", errors.Errorf("Failed to request hot router, %s status %s body %s",
+			url, resp.Status(), resp.String())
+	}
+
+	return result.Hashes, result.NextCursor, nil
 }
 
 func requestIndexer(url string) ([]byte, error) {

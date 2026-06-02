@@ -35,6 +35,13 @@ eth:
 #    remind: 5m
 #  # Alert channel
 #  alertChannel: tgRobot
+#  # Hot-storage router base URL. When set, the reconcile worker labels files
+#  # hot/standard by paging the router's cached-file set. Leave empty to disable.
+#  hotRouter: https://hot-router.0g.ai
+#  # How often to reconcile the hot/standard storage class (default 2m)
+#  classReconcileInterval: 2m
+#  # Page size when paging GET /files/cached (default 2000)
+#  classPageLimit: 2000
 
 # storage contracts info configurations
 contract:
