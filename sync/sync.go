@@ -97,6 +97,7 @@ func (s *Syncer) Sync(ctx context.Context, wg *sync.WaitGroup) {
 
 	go s.storageSyncer.Sync(ctx, s.storageSyncer.LatestFiles)
 	go s.storageSyncer.Sync(ctx, s.storageSyncer.NodeSyncHeight)
+	go s.storageSyncer.Sync(ctx, s.storageSyncer.ReconcileStorageClass)
 	go s.patchSyncer.Sync(ctx, s.patchSyncer.L1Txs)
 	go s.patchSyncer.Sync(ctx, s.patchSyncer.MinerAttempts)
 

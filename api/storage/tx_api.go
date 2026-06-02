@@ -79,6 +79,8 @@ func getStorageTx(c *gin.Context) (interface{}, error) {
 		TxHash:      submit.TxHash,
 		Timestamp:   submitTime,
 		Expiration:  submitTime + expireSeconds.Uint64(),
+
+		StorageClass: normalizeStorageClass(submit.StorageClass),
 	}
 
 	var extra store.SubmitExtra
@@ -154,8 +156,8 @@ func listAddressStorageTxs(c *gin.Context) (interface{}, error) {
 func listSubmits(addressID *uint64, params listStorageTxParam) (int64,
 	[]store.Submit, error) {
 	if addressID == nil {
-		total, submits, err := db.SubmitStore.List(params.RootHash, params.TxHash, params.isDesc(), params.Skip,
-			params.Limit)
+		total, submits, err := db.SubmitStore.List(params.RootHash, params.TxHash, params.StorageClass,
+			params.isDesc(), params.Skip, params.Limit)
 		if err != nil {
 			return 0, nil, scanApi.ErrDatabase(errors.WithMessage(err, "Failed to get submit list"))
 		}
@@ -163,7 +165,7 @@ func listSubmits(addressID *uint64, params listStorageTxParam) (int64,
 	}
 
 	total, addrSubmits, err := db.AddressSubmitStore.List(addressID, params.RootHash, params.TxHash,
-		params.MinTimestamp, params.MaxTimestamp, params.isDesc(), params.Skip, params.Limit)
+		params.StorageClass, params.MinTimestamp, params.MaxTimestamp, params.isDesc(), params.Skip, params.Limit)
 	if err != nil {
 		return 0, nil, scanApi.ErrDatabase(errors.WithMessage(err, "Failed to get account's submit list"))
 	}
@@ -182,6 +184,7 @@ func listSubmits(addressID *uint64, params listStorageTxParam) (int64,
 			TotalSegNum:     as.TotalSegNum,
 			UploadedSegNum:  as.UploadedSegNum,
 			Fee:             as.Fee,
+			StorageClass:    as.StorageClass,
 		})
 	}
 
@@ -219,6 +222,7 @@ func convertStorageTxs(total int64, submits []store.Submit) (*StorageTxList, err
 			Expiration:       submitTime + expireSeconds.Uint64(),
 			DataSize:         submit.Length,
 			StorageFee:       submit.Fee,
+			StorageClass:     normalizeStorageClass(submit.StorageClass),
 		}
 		storageTxs = append(storageTxs, storageTx)
 	}
@@ -255,4 +259,14 @@ func refreshFileInfos(submits []store.Submit) ([]store.Submit, error) {
 	}
 
 	return submits, nil
+}
+
+// normalizeStorageClass returns the storage class for API responses, defaulting
+// to "standard" when unset (e.g. legacy rows the reconcile worker has not yet
+// classified).
+func normalizeStorageClass(class string) string {
+	if class == "" {
+		return store.StorageClassStandard
+	}
+	return class
 }

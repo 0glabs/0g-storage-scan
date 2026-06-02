@@ -382,6 +382,12 @@ func TxHash(rh string) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
+func StorageClass(class string) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Where("storage_class = ?", class)
+	}
+}
+
 func StatType(t string) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Where("stat_type = ?", t)

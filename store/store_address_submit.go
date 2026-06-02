@@ -23,6 +23,9 @@ type AddressSubmit struct {
 	UploadedSegNum uint64          `gorm:"not null;default:0"`
 	Status         uint8           `gorm:"not null;default:0"`
 	Fee            decimal.Decimal `gorm:"type:decimal(65);not null"`
+
+	// StorageClass mirrors Submit.StorageClass for per-address (My Files) queries.
+	StorageClass string `gorm:"size:20;not null;default:standard;index"`
 }
 
 func (AddressSubmit) TableName() string {
@@ -61,8 +64,21 @@ func (ass *AddressSubmitStore) UpdateByPrimaryKey(dbTx *gorm.DB, s *AddressSubmi
 	return nil
 }
 
-func (ass *AddressSubmitStore) List(addressID *uint64, rootHash *string, txHash *string, minTimestamp, maxTimestamp *int,
-	idDesc bool, skip, limit int) (
+// SetStorageClassByRootHashes mirrors SubmitStore.SetStorageClassByRootHashes
+// for the per-address table so My Files stays consistent with the global view.
+func (ass *AddressSubmitStore) SetStorageClassByRootHashes(class string, rootHashes []string) (int64, error) {
+	if len(rootHashes) == 0 {
+		return 0, nil
+	}
+	res := ass.DB.Model(&AddressSubmit{}).
+		Where("root_hash IN ?", rootHashes).
+		Where("storage_class <> ?", class).
+		Update("storage_class", class)
+	return res.RowsAffected, res.Error
+}
+
+func (ass *AddressSubmitStore) List(addressID *uint64, rootHash *string, txHash *string, storageClass *string,
+	minTimestamp, maxTimestamp *int, idDesc bool, skip, limit int) (
 	int64, []AddressSubmit, error) {
 	if addressID == nil {
 		return 0, nil, errors.New("nil addressID")
@@ -76,6 +92,9 @@ func (ass *AddressSubmitStore) List(addressID *uint64, rootHash *string, txHash 
 	}
 	if txHash != nil {
 		conds = append(conds, TxHash(*txHash))
+	}
+	if storageClass != nil {
+		conds = append(conds, StorageClass(*storageClass))
 	}
 	if minTimestamp != nil {
 		conds = append(conds, MinTimestampBlockTime(*minTimestamp))
