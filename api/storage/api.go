@@ -122,6 +122,9 @@ func Register(router *gin.Engine) {
 	rewardsRoute := apiRoute.Group("/rewards")
 	rewardsRoute.GET("", listRewardsHandler)
 
+	storageRoute := apiRoute.Group("/storage")
+	storageRoute.GET("node-types", listNodeTypesHandler)
+
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, ginSwagger.InstanceName("storage")))
 }
 

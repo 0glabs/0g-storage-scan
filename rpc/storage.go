@@ -52,6 +52,12 @@ type StorageConfig struct {
 	ClassReconcileInterval time.Duration `default:"2m"`
 	// ClassPageLimit is the page size used when paging GET /files/cached.
 	ClassPageLimit int `default:"2000"`
+
+	// NodeTypeRefreshInterval is how often the worker refreshes node hot/regular
+	// tags from the indexer + hot router. These lists change rarely.
+	NodeTypeRefreshInterval time.Duration `default:"24h"`
+	// NodeTypePageLimit is the page size used when paging the router GET /providers.
+	NodeTypePageLimit int `default:"2000"`
 }
 
 type FileInfoParam struct {
@@ -206,6 +212,104 @@ func ListCachedFiles(cfg StorageConfig, cursor string, limit int) (hashes []stri
 	}
 
 	return result.Hashes, result.NextCursor, nil
+}
+
+type shardedNode struct {
+	URL string `json:"url"`
+}
+
+type shardedNodesRPCResponse struct {
+	Result struct {
+		Trusted    []shardedNode `json:"trusted"`
+		Discovered []shardedNode `json:"discovered"`
+	} `json:"result"`
+	Error *struct {
+		Code    int    `json:"code"`
+		Message string `json:"message"`
+	} `json:"error"`
+}
+
+// GetShardedNodes fetches the regular storage network's node URLs (trusted +
+// discovered) from the indexer via JSON-RPC indexer_getShardedNodes (POST to the
+// indexer base URL).
+func GetShardedNodes(cfg StorageConfig) ([]string, error) {
+	url := strings.TrimRight(cfg.Indexer, "/") + "/"
+	reqBody := map[string]interface{}{
+		"jsonrpc": "2.0",
+		"method":  "indexer_getShardedNodes",
+		"params":  []interface{}{},
+		"id":      1,
+	}
+
+	client := resty.New()
+	if cfg.RequestTimeout > 0 {
+		client.SetTimeout(cfg.RequestTimeout)
+	}
+
+	var result shardedNodesRPCResponse
+	resp, err := client.R().
+		SetHeader("Content-Type", "application/json").
+		SetBody(reqBody).
+		SetResult(&result).
+		Post(url)
+	if err != nil {
+		return nil, errors.WithMessagef(err, "Failed to request indexer getShardedNodes, %s", url)
+	}
+	if resp.IsError() {
+		return nil, errors.Errorf("Failed to request indexer getShardedNodes, %s status %s body %s",
+			url, resp.Status(), resp.String())
+	}
+	if result.Error != nil {
+		return nil, errors.Errorf("indexer getShardedNodes rpc error: %s", result.Error.Message)
+	}
+
+	urls := make([]string, 0, len(result.Result.Trusted)+len(result.Result.Discovered))
+	for _, n := range result.Result.Trusted {
+		urls = append(urls, n.URL)
+	}
+	for _, n := range result.Result.Discovered {
+		urls = append(urls, n.URL)
+	}
+	return urls, nil
+}
+
+// ProviderInfo is one hot-storage provider entry from the router GET /providers.
+type ProviderInfo struct {
+	Address string `json:"address"`
+	URL     string `json:"url"`
+	Active  bool   `json:"active"`
+}
+
+type providersResponse struct {
+	Providers  []ProviderInfo `json:"providers"`
+	NextCursor string         `json:"next_cursor"`
+}
+
+// ListProviders fetches one page of hot-storage providers from the router's
+// GET /providers (keyset-paginated by provider address). Empty returned cursor
+// means there are no more pages.
+func ListProviders(cfg StorageConfig, cursor string, limit int) ([]ProviderInfo, string, error) {
+	url := fmt.Sprintf("%s/providers?limit=%d", strings.TrimRight(cfg.HotRouter, "/"), limit)
+	if cursor != "" {
+		url += "&cursor=" + cursor
+	}
+
+	client := resty.New()
+	if cfg.RequestTimeout > 0 {
+		client.SetTimeout(cfg.RequestTimeout)
+	}
+
+	var result providersResponse
+	resp, err := client.R().SetResult(&result).Get(url)
+	if err != nil {
+		return nil, "", errors.WithMessagef(err, "Failed to request hot router providers, %s", url)
+	}
+	if resp.IsError() {
+		return nil, "", errors.Errorf("Failed to request hot router providers, %s status %s body %s",
+			url, resp.Status(), resp.String())
+	}
+
+	return result.Providers, result.NextCursor, nil
 }
 
 func requestIndexer(url string) ([]byte, error) {

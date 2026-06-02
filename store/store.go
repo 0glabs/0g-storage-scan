@@ -52,35 +52,37 @@ type MysqlStore struct {
 	*DAClientStore
 	*DAClientStatStore
 	*RateLimitStore
+	*StorageNodeTypeStore
 }
 
 func MustNewStore(db *gorm.DB, config mysql.Config) *MysqlStore {
 	return &MysqlStore{
-		Store:               mysql.NewStore(db),
-		AddressStore:        newAddressStore(db),
-		BlockStore:          newBlockStore(db),
-		ConfigStore:         newConfigStore(db),
-		SubmitStore:         newSubmitStore(db, config),
-		AddressSubmitStore:  newAddressSubmitStore(db),
-		RewardStore:         newRewardStore(db),
-		RewardStatStore:     newRewardStatStore(db),
-		RewardTopnStatStore: newRewardTopnStatStore(db),
-		AddressRewardStore:  newAddressRewardStore(db),
-		SubmitStatStore:     newSubmitStatStore(db),
-		SubmitTopnStatStore: newSubmitTopnStatStore(db),
-		AddressStatStore:    newAddressStatStore(db),
-		MinerStore:          newMinerStore(db),
-		MinerStatStore:      newMinerStatStore(db),
-		MinerRegisterStore:  newMinerRegisterStore(db),
-		FlowEpochStore:      newFlowEpochStore(db),
-		DASignerStore:       newDASignerStore(db),
-		DASignerStatStore:   newDASignerStatStore(db),
-		DASubmitStore:       newDASubmitStore(db),
-		DARewardStore:       newDARewardStore(db),
-		DASubmitStatStore:   newDASubmitStatStore(db),
-		DAClientStore:       newDAClientStore(db),
-		DAClientStatStore:   newDAClientStatStore(db),
-		RateLimitStore:      newRateLimitStore(db),
+		Store:                mysql.NewStore(db),
+		AddressStore:         newAddressStore(db),
+		BlockStore:           newBlockStore(db),
+		ConfigStore:          newConfigStore(db),
+		SubmitStore:          newSubmitStore(db, config),
+		AddressSubmitStore:   newAddressSubmitStore(db),
+		RewardStore:          newRewardStore(db),
+		RewardStatStore:      newRewardStatStore(db),
+		RewardTopnStatStore:  newRewardTopnStatStore(db),
+		AddressRewardStore:   newAddressRewardStore(db),
+		SubmitStatStore:      newSubmitStatStore(db),
+		SubmitTopnStatStore:  newSubmitTopnStatStore(db),
+		AddressStatStore:     newAddressStatStore(db),
+		MinerStore:           newMinerStore(db),
+		MinerStatStore:       newMinerStatStore(db),
+		MinerRegisterStore:   newMinerRegisterStore(db),
+		FlowEpochStore:       newFlowEpochStore(db),
+		DASignerStore:        newDASignerStore(db),
+		DASignerStatStore:    newDASignerStatStore(db),
+		DASubmitStore:        newDASubmitStore(db),
+		DARewardStore:        newDARewardStore(db),
+		DASubmitStatStore:    newDASubmitStatStore(db),
+		DAClientStore:        newDAClientStore(db),
+		DAClientStatStore:    newDAClientStatStore(db),
+		RateLimitStore:       newRateLimitStore(db),
+		StorageNodeTypeStore: newStorageNodeTypeStore(db),
 	}
 }
 

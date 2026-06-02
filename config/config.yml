@@ -42,6 +42,10 @@ eth:
 #  classReconcileInterval: 2m
 #  # Page size when paging GET /files/cached (default 2000)
 #  classPageLimit: 2000
+#  # How often to refresh node hot/regular tags from the indexer + hot router (default 24h)
+#  nodeTypeRefreshInterval: 24h
+#  # Page size when paging the router GET /providers (default 2000)
+#  nodeTypePageLimit: 2000
 
 # storage contracts info configurations
 contract:
